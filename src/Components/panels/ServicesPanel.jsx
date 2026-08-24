@@ -31,8 +31,6 @@ function NewWorkForm({ category, onCreated }) {
   const [submitting, setSubmitting] = useState(false);
   const inputRef = useRef(null);
 
-  // Gera pré-visualizações locais das imagens escolhidas, e limpa-as
-  // quando a lista de ficheiros muda ou o componente desmonta.
   useEffect(() => {
     const urls = files.map((f) => URL.createObjectURL(f));
     setPreviews(urls);

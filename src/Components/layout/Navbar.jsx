@@ -12,7 +12,7 @@ function Navbar() {
 
   useEffect(() => {
     function onScroll() {
-      const fadeEnd = 300; // <- ajusta: quantos pixels de scroll até sumir de vez
+      const fadeEnd = 300;
       const p =
         view === "site"
           ? Math.min(Math.max(window.scrollY / fadeEnd, 0), 1)
@@ -25,7 +25,6 @@ function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [view]);
 
-  // fecha o menu mobile automaticamente se o ecrã crescer de volta para desktop
   useEffect(() => {
     function onResize() {
       if (window.innerWidth >= 768) setMobileOpen(false);
@@ -39,7 +38,6 @@ function Navbar() {
     setMobileOpen(false);
     goTo("site");
 
-    // dá tempo à view "site" de montar (caso venha de login/admin) antes de fazer scroll
     setTimeout(() => {
       if (href === "#") {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -63,7 +61,7 @@ function Navbar() {
       style={{
         fontFamily: "'Garet', 'Poppins', sans-serif",
         opacity: 1 - progress,
-        transform: `translateY(${-progress * 100}%)`, // desliza pra cima enquanto some
+        transform: `translateY(${-progress * 100}%)`,
         transition: "opacity 0.1s linear, transform 0.1s linear",
         pointerEvents: progress === 1 ? "none" : "auto",
       }}
@@ -94,7 +92,7 @@ function Navbar() {
           ))}
         </ul>
 
-        {/* ações à direita — só em desktop */}
+        {}
         <div className="hidden md:flex items-center gap-3">
           {isAuthenticated ? (
             <>
@@ -126,7 +124,7 @@ function Navbar() {
           )}
         </div>
 
-        {/* botão hamburger — fixo no canto direito, só em mobile */}
+        {}
         <button
           type="button"
           className="md:hidden relative w-11 h-11 flex items-center justify-center rounded-full shrink-0 transition-colors"
@@ -158,7 +156,7 @@ function Navbar() {
         </button>
       </div>
 
-      {/* overlay — fecha o menu ao tocar fora dele */}
+      {}
       {mobileOpen && (
         <div
           className="md:hidden fixed inset-0 bg-black/40"
@@ -167,7 +165,7 @@ function Navbar() {
         />
       )}
 
-      {/* painel mobile — dropdown estilizado com animação de entrada */}
+      {}
       <div
         className="md:hidden absolute top-20 left-0 w-full overflow-hidden transition-all duration-300 ease-out"
         style={{

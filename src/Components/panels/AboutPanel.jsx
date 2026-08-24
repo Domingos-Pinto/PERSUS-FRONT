@@ -4,11 +4,6 @@ import { getSettings, updateSettingsImages } from "../../service/settingsApi";
 import { assetUrl } from "../../config/api";
 import { toast } from "../ui/Toast";
 
-// NOTA BACKEND: tal como about_image, os campos about_image_2 e
-// about_image_3 têm de ser aceites pelo endpoint PUT /api/settings como
-// ficheiros (fillable + validação no SettingController), tal como já
-// está feito para about_image.
-
 function AboutPanel() {
   const [settings, setSettings] = useState(null);
   const [savingKey, setSavingKey] = useState(null);

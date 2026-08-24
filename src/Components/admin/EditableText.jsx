@@ -1,18 +1,11 @@
-// src/components/admin/EditableText.jsx
 import { useAdmin } from "../../context/AdminContext";
 import { useEditMode } from "../../context/EditModeContext";
 
-// value + onChange controlados pelo componente pai.
-// Por agora o onChange só atualiza o estado local do pai;
-// quando ligares ao backend, troca esse onChange por um PATCH/save real.
+
 function EditableText({ value, onChange, as: Tag = "p", className = "" }) {
   const { isAdmin } = useAdmin();
   const isEditMode = useEditMode();
 
-  // Só é editável quando o utilizador É admin E a árvore atual está
-  // explicitamente em modo de edição (dentro de uma página do painel
-  // /admin que envolve as sections com <EditModeProvider>). No site
-  // público isEditMode é sempre false por omissão, mesmo com admin logado.
   const editable = isAdmin && isEditMode;
 
   const handleBlur = (e) => {

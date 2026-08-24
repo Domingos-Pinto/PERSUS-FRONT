@@ -1,4 +1,3 @@
-// src/service/authApi.js
 import { http, ensureCsrfCookie } from "./http";
 
 export async function loginRequest({ login, password }) {

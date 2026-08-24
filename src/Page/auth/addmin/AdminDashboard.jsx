@@ -24,11 +24,9 @@ import {
   confirmDialog,
 } from "../../../Components/ui/ConfirmDialog";
 
-// Zoom/posição do logo de fundo — ajusta estes 2 valores até ficar bem:
 const LOGO_BG_SIZE = "auto 200%";
 const LOGO_BG_POSITION = "left center";
 
-// Tabs que tanto o admin como o editor veem.
 const BASE_TABS = [
   { id: "welcome", label: "Bem-vindo", icon: FaHome, Component: WelcomePanel },
   { id: "about", label: "Sobre", icon: FaUserFriends, Component: AboutPanel },
@@ -40,7 +38,6 @@ const BASE_TABS = [
   },
 ];
 
-// Tabs só para admin: contactos/redes sociais/manutenção do site, e gestão de funcionários.
 const ADMIN_TABS = [
   {
     id: "contact",
@@ -56,7 +53,6 @@ const ADMIN_TABS = [
   },
 ];
 
-// "Meu Perfil" fica sempre por último, para admin e editor.
 const PROFILE_TAB = {
   id: "profile",
   label: "Meu Perfil",

@@ -4,8 +4,6 @@ import EditableText from "../admin/EditableText";
 import { getSettings } from "../../service/settingsApi";
 import { assetUrl } from "../../config/api";
 
-// Sub-componente: caixa de imagem com fade + scale ao entrar na tela.
-// Só exibe — a publicação de verdade acontece no painel /admin (aba Bem-vindo).
 function RevealImage(props) {
   const src = props.src;
   const label = props.label;

@@ -52,12 +52,6 @@ const initialServices = [
   },
 ];
 
-// Card grande (quase toda a tela, com margem e cantos arredondados) que
-// abre com uma animação suave de fade + scale, em vez de saltar para
-// ecrã inteiro de repente. Dentro dele: uma grelha com todas as fotos
-// do serviço; ao clicar numa, ela expande dentro do MESMO card, com um
-// crossfade suave, mostrando o título e a descrição desse trabalho
-// específico (dados pelo admin/funcionário ao publicar).
 function ServiceGalleryModal({ serviceTitle, slides, onClose }) {
   const [mounted, setMounted] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -88,14 +82,42 @@ function ServiceGalleryModal({ serviceTitle, slides, onClose }) {
       if (detailIndex !== null && e.key === "ArrowRight") goNext();
     };
     document.addEventListener("keydown", onKeyDown);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = previousOverflow;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detailIndex, slides.length]);
+
+  // trava o scroll do body enquanto o modal estiver aberto (funciona bem
+  // inclusive no iOS/Safari, onde só "overflow: hidden" não é suficiente)
+  useEffect(() => {
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const previous = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+
+    return () => {
+      body.style.position = previous.position;
+      body.style.top = previous.top;
+      body.style.left = previous.left;
+      body.style.right = previous.right;
+      body.style.width = previous.width;
+      body.style.overflow = previous.overflow;
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
 
   const visible = mounted && !closing;
   const slide = detailIndex !== null ? slides[detailIndex] : null;
@@ -106,6 +128,8 @@ function ServiceGalleryModal({ serviceTitle, slides, onClose }) {
       role="dialog"
       aria-modal="true"
       aria-label={`Imagens de ${serviceTitle}`}
+      style={{ touchAction: "pan-y" }}
+      onTouchMove={(e) => e.stopPropagation()}
     >
       <div
         className={`absolute inset-0 bg-black/75 backdrop-blur-sm transition-opacity duration-300 ease-out ${
@@ -119,7 +143,7 @@ function ServiceGalleryModal({ serviceTitle, slides, onClose }) {
           visible ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
-        {/* cabeçalho do card */}
+        {}
         <div className="flex items-center justify-between px-5 md:px-8 py-4 md:py-5 shrink-0 border-b border-white/10">
           <div className="flex items-center gap-3">
             {detailIndex !== null && (
@@ -158,11 +182,13 @@ function ServiceGalleryModal({ serviceTitle, slides, onClose }) {
         <div className="relative flex-1 overflow-hidden">
           {/* grelha com todas as fotos */}
           <div
-            className={`absolute inset-0 overflow-y-auto p-5 md:p-8 transition-opacity duration-250 ease-out ${
+            className={`absolute inset-0 overflow-y-auto overscroll-contain p-5 md:p-8 transition-opacity duration-250 ease-out ${
               detailIndex === null
                 ? "opacity-100"
                 : "opacity-0 pointer-events-none"
             }`}
+            style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y" }}
+            onTouchMove={(e) => e.stopPropagation()}
           >
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {slides.map((s, i) => (
@@ -189,9 +215,7 @@ function ServiceGalleryModal({ serviceTitle, slides, onClose }) {
             </div>
           </div>
 
-          {/* foto ampliada dentro do card — object-contain garante que a
-              foto aparece SEMPRE inteira (nunca cortada), com uma versão
-              desfocada da própria foto a preencher o fundo */}
+          {}
           <div
             className={`absolute inset-0 transition-opacity duration-250 ease-out ${
               detailIndex !== null
@@ -279,15 +303,12 @@ function ServiceCard({
 }) {
   const Icon = icons[service.category];
 
-  // Se já houver uma foto publicada para esta categoria, o cartão fica
-  // com a foto por cima (estilo Manara) — fica óbvio que dá para clicar.
-  // Sem foto ainda, mantém o cartão simples com ícone.
   if (thumbnail) {
     return (
       <button
         type="button"
         onClick={() => onSelect(service.category)}
-        className={`group relative text-left rounded-2xl overflow-hidden bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 ${
+        className={`shrink-0 w-[78%] sm:w-[300px] snap-start group relative text-left rounded-2xl overflow-hidden bg-zinc-900 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 ${
           isSelected ? "ring-2 ring-amber-500" : ""
         }`}
       >
@@ -337,7 +358,7 @@ function ServiceCard({
     <button
       type="button"
       onClick={() => onSelect(service.category)}
-      className={`group text-left bg-white rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500 p-8 ${
+      className={`shrink-0 w-[78%] sm:w-[300px] snap-start group text-left bg-white rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500 p-8 ${
         isSelected ? "ring-2 ring-amber-500" : ""
       }`}
     >
@@ -395,7 +416,6 @@ function Services() {
         )
     : [];
 
-  // Primeira foto publicada de cada categoria, para usar como capa do cartão
   const thumbnailByCategory = services.reduce((acc, s) => {
     const work = works.find(
       (w) => w.category === s.category && (w.images || []).length > 0,
@@ -430,7 +450,7 @@ function Services() {
           </h2>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mt-12 flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 -mx-6 px-6">
           {services.map((service, index) => (
             <ServiceCard
               key={service.category}

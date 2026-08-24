@@ -6,19 +6,6 @@ import {
   FaTimes,
 } from "react-icons/fa";
 
-// Sistema de notificações "toast" — substitui os avisos inline (aquelas
-// caixas de texto dentro dos formulários) por notificações flutuantes,
-// bonitas e consistentes em todo o site (admin + funcionário + público).
-//
-// Uso, em qualquer componente:
-//   import { toast } from "../ui/Toast";
-//   toast.success("Guardado com sucesso.");
-//   toast.error("Não foi possível guardar.");
-//   toast.info("A processar...");
-//
-// <Toaster /> só precisa de ser montado UMA VEZ, no topo da árvore
-// (já está feito no AdminDashboard.jsx). Todas as chamadas a toast.*()
-// em qualquer componente aparecem ali.
 
 let listeners = [];
 let idCounter = 0;

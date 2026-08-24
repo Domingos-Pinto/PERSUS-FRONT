@@ -3,9 +3,6 @@ import logo from "../../assets/logo.png";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigation } from "../../context/NavigationContext";
 
-// Zoom/posição do logo de fundo — ajusta estes 2 valores até ficar bem:
-// LOGO_BG_SIZE: quanto maior, mais "zoom" (ex: "180%", "250%")
-// LOGO_BG_POSITION: onde focar dentro da imagem (ex: "left center", "20% center")
 const LOGO_BG_SIZE = "auto 150%";
 const LOGO_BG_POSITION = "left center";
 

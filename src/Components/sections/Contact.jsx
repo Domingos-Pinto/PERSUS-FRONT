@@ -12,9 +12,6 @@ import EditableText from "../admin/EditableText";
 import { getSettings } from "../../service/settingsApi";
 import { assetUrl } from "../../config/api";
 
-// Usamos uma referência à tag em vez de escrever a tag diretamente,
-// porque o copy-paste deste projeto tem tendência a "comer" a abertura
-// de tags <a ...> (já visto noutros ficheiros). Isto evita o problema.
 const Anchor = "a";
 
 function ContactItem(props) {
@@ -41,12 +38,6 @@ function ContactItem(props) {
   );
 }
 
-// Telefone e email usam isto em vez de tel:/mailto: — esses dois
-// protocolos pedem ao sistema operativo para abrir uma app de
-// telefone/email, e nem todos os computadores (nem todos os
-// visitantes) têm uma configurada. Aqui, em vez de tentar abrir uma
-// app, copiamos o valor para a área de transferência e mostramos um
-// aviso curto "Copiado!".
 function CopyableContactItem(props) {
   const Icon = props.icon;
   const value = props.value;
@@ -60,7 +51,6 @@ function CopyableContactItem(props) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1600);
     } catch {
-      // área de transferência indisponível — não faz nada, só não copia
     }
   };
 
@@ -107,7 +97,6 @@ function SocialIcon(props) {
   );
 }
 
-// Versão grande, só para desktop (lg+), ao lado do bloco de contactos.
 function FooterPhotoDesktop({ src, side }) {
   if (!src) return <div className="hidden lg:block" />;
   return (
@@ -124,10 +113,6 @@ function FooterPhotoDesktop({ src, side }) {
   );
 }
 
-// Versão compacta, só para telemóvel/tablet — antes as fotos ficavam
-// completamente escondidas em ecrãs pequenos (hidden lg:block sem
-// alternativa). Agora aparecem lado a lado, por cima do bloco de
-// contactos, em tamanho reduzido.
 function FooterPhotosMobile({ imageLeft, imageRight }) {
   if (!imageLeft && !imageRight) return null;
   return (

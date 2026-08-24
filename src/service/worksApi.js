@@ -1,4 +1,3 @@
-// src/services/worksApi.js
 import { http } from "./http";
 
 export function listWorks() {

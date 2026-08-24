@@ -1,23 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 
-// Substitui o confirm() nativo do browser (aquela caixa cinzenta feia
-// do sistema operativo) por um modal consistente com o resto do site.
-//
-// Uso, em qualquer componente:
-//   import { confirmDialog } from "../ui/ConfirmDialog";
-//
-//   const ok = await confirmDialog({
-//     title: "Apagar trabalho",
-//     message: "Esta ação não pode ser desfeita.",
-//     confirmText: "Apagar",
-//     danger: true,
-//   });
-//   if (!ok) return;
-//
-// <ConfirmDialogHost /> só precisa de ser montado UMA VEZ, no topo da
-// árvore (já está feito no AdminDashboard.jsx).
-
 let resolver = null;
 let openHandler = null;
 

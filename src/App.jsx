@@ -14,8 +14,6 @@ function AppContent() {
   const { view, goTo } = useNavigation();
   const { isAuthenticated } = useAuth();
 
-  // Se o utilizador abrir o link do email de recuperação (?token=...&email=...),
-  // manda logo para o ecrã de redefinição, seja qual for o estado atual.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (
@@ -35,12 +33,10 @@ function AppContent() {
   }
 
   if (view === "login") {
-    // se já estiver autenticado, não faz sentido mostrar o login de novo
     return isAuthenticated ? <AdminDashboard /> : <Login />;
   }
 
   if (view === "admin") {
-    // protege a rota: sem sessão, manda para o login em vez de mostrar o painel
     return isAuthenticated ? <AdminDashboard /> : <Login />;
   }
 

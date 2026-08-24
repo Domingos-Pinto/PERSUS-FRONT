@@ -5,32 +5,17 @@ const FRAME_COUNT = 50;
 const frameSrc = (n) =>
   `/src/assets/hero-frames/webp/${String(n).padStart(4, "0")}.webp`;
 
-// Quantos frames têm de estar carregados ANTES de libertarmos o "ready".
-// Antes só esperávamos pelo frame 1, o que fazia com que um scroll rápido
-// logo no início "colasse" a imagem — porque drawCover() recusa desenhar
-// um frame que ainda não chegou (img.complete === false) e fica preso no
-// último frame válido. Com um bloco inicial maior, o utilizador já não
-// consegue ultrapassar o que está disponível tão facilmente.
 const PRELOAD_PRIORITY = 6;
 
-// Desktop
 const IMAGE_CONTRAST = 1.12;
 const IMAGE_ZOOM = 1.2;
 const IMAGE_POSITION_Y = 100; // 0-100 — 100 = mostra o chão, 0 = mostra o teto
 
-// Mobile — sempre "cover" (preenche o ecrã, tal como no desktop e como o
-// Manara faz), mas com menos zoom extra para a casa aparecer mais inteira
-// no ecrã estreito, sem sobras em branco.
 const MOBILE_IMAGE_ZOOM = 1.0;
 const MOBILE_IMAGE_POSITION_Y = 65; // um pouco mais alto que no desktop
 
-// Controla a "duração" do scroll: quanto maior, mais devagar a animação
-// avança pelos 50 frames.
 const SCROLL_LENGTH_VH = 300;
 
-// Fração do espaço entre dois frames onde o dissolve realmente acontece.
-// Com 50 frames (próximos entre si) já não precisamos de comprimir muito
-// a janela — 0.6 dá uma transição suave sem fantasma perceptível.
 const DISSOLVE_WINDOW = 0.6;
 
 function smoothstep(t) {
@@ -48,9 +33,6 @@ function HeroCanvas() {
   const [ready, setReady] = useState(false);
   const [firstFrameSharp, setFirstFrameSharp] = useState(false);
 
-  // Breakpoint mobile: usado só para ajustar zoom/posição da imagem e o
-  // layout de texto. O modo de desenho é sempre "cover" — nunca deixa
-  // espaço em branco, tal como no desktop.
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined"
       ? window.matchMedia("(max-width: 640px)").matches
@@ -75,10 +57,6 @@ function HeroCanvas() {
       framesRef.current[i] = img;
       setLoadedCount(loaded);
 
-      // Só liberta o "ready" quando já temos um bloco inicial de frames
-      // carregado (ou, no limite, todos, caso FRAME_COUNT seja menor
-      // que PRELOAD_PRIORITY). Isto evita o "colar" no início do scroll,
-      // sem obrigar a esperar por todos os 50 frames.
       if (!releasedReady && loaded >= Math.min(PRELOAD_PRIORITY, FRAME_COUNT)) {
         releasedReady = true;
         setReady(true);
@@ -90,11 +68,6 @@ function HeroCanvas() {
       img.decoding = "async";
       img.src = frameSrc(i);
 
-      // img.decode() devolve uma Promise que resolve só depois da imagem
-      // estar realmente decodificada (não só descarregada), e em browsers
-      // que suportam, faz esse trabalho fora da main thread — evita picos
-      // de CPU quando várias imagens ficam prontas ao mesmo tempo. Caim
-      // com fallback para onload em browsers/casos sem suporte.
       if (img.decode) {
         img.decode().then(
           () => markLoaded(i, img),
@@ -136,16 +109,6 @@ function HeroCanvas() {
       lenis.destroy();
     };
   }, []);
-
-  // Desenho no canvas. IMPORTANTE: já não aplicamos ctx.filter (contrast)
-  // aqui dentro — isso obrigava o browser a recalcular o filtro em CADA
-  // drawImage, duas vezes por frame durante os blends. Filtros de canvas
-  // 2D são pesados e mal acelerados por GPU, especialmente em hardware
-  // mais antigo (GPU integrada). O contraste agora é aplicado via CSS no
-  // próprio elemento <canvas>, que o compositor da GPU trata como uma
-  // única camada — muito mais barato, e é essencialmente o que sites
-  // como o Manara fazem (canvas com resolução interna baixa + efeitos
-  // via CSS/compositor, não recalculados a cada frame).
   useEffect(() => {
     if (!ready) return;
 
@@ -157,10 +120,6 @@ function HeroCanvas() {
     function resizeCanvas() {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const { clientWidth, clientHeight } = canvas;
-      // Evita reset desnecessário do canvas (o que limpa o conteúdo e
-      // pode causar um "flash"/colagem visual) quando as dimensões CSS
-      // não mudaram de facto — importante no mobile, onde a barra do
-      // browser esconder/aparecer dispara eventos de resize/scroll extra.
       const targetWidth = Math.round(clientWidth * dpr);
       const targetHeight = Math.round(clientHeight * dpr);
       if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
@@ -172,14 +131,8 @@ function HeroCanvas() {
     resizeCanvas();
 
     window.addEventListener("resize", resizeCanvas);
-    // No mobile, a UI do browser (barra de endereço) pode esconder/mostrar
-    // durante o scroll, mudando a altura útil (100svh) sem disparar
-    // "resize". Isto garante que o canvas acompanha essa mudança.
     window.addEventListener("orientationchange", resizeCanvas);
 
-    // ResizeObserver cobre o caso em que o próprio elemento canvas muda
-    // de tamanho por causa de layout (ex: barra de endereço a esconder),
-    // sem depender só do evento "resize" do window.
     let ro;
     if (typeof ResizeObserver !== "undefined") {
       ro = new ResizeObserver(() => resizeCanvas());
@@ -193,9 +146,6 @@ function HeroCanvas() {
       const iw = img.naturalWidth;
       const ih = img.naturalHeight;
 
-      // Sempre "cover" — preenche o ecrã por completo, nunca deixa
-      // espaço em branco. No mobile só reduzimos o zoom extra e
-      // ajustamos a posição vertical para a casa aparecer mais inteira.
       const zoom = isMobile ? MOBILE_IMAGE_ZOOM : IMAGE_ZOOM;
       const positionY = isMobile ? MOBILE_IMAGE_POSITION_Y : IMAGE_POSITION_Y;
       const scale = Math.max(cw / iw, ch / ih) * zoom;
@@ -213,9 +163,6 @@ function HeroCanvas() {
     const windowStart = 0.5 - halfWindow;
     const windowEnd = 0.5 + halfWindow;
 
-    // Guarda o último par de frames desenhado, para conseguirmos manter
-    // a última imagem válida no ecrã (em vez de "congelar" com um clear
-    // vazio) quando um frame ainda não está disponível.
     let lastGoodBaseIndex = 1;
 
     function tick() {
@@ -254,9 +201,6 @@ function HeroCanvas() {
       const ch = canvas.clientHeight;
       ctx.clearRect(0, 0, cw, ch);
 
-      // Se o frame-alvo ainda não tiver carregado, cai para o último
-      // frame válido conhecido em vez de deixar o canvas em branco —
-      // evita um "flash" preto durante scroll rápido em ligações lentas.
       const baseImg = framesRef.current[baseIndex];
       const drawIndex =
         baseImg && baseImg.complete && baseImg.naturalWidth

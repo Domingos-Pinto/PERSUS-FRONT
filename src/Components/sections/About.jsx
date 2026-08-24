@@ -4,7 +4,6 @@ import EditableText from "../admin/EditableText";
 import { getSettings } from "../../service/settingsApi";
 import { assetUrl } from "../../config/api";
 
-// Só exibe — a publicação de verdade acontece no painel /admin (aba Sobre).
 function RevealPhoto({
   src,
   label,
@@ -78,7 +77,6 @@ function About() {
     );
   };
 
-  // Puxa as imagens publicadas no painel de admin (aba Sobre).
   useEffect(() => {
     getSettings()
       .then((settings) => {
@@ -163,7 +161,7 @@ function About() {
             )}
           </div>
 
-          {/* Galeria de fotos — imagem principal maior + 2 secundárias lado a lado */}
+          {}
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
               <RevealPhoto

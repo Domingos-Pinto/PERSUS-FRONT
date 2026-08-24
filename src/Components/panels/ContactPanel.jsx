@@ -8,11 +8,7 @@ import { assetUrl } from "../../config/api";
 import ImageSlot from "../ImageSlot";
 import { toast } from "../ui/Toast";
 
-// type/autoComplete corretos por campo — sem isto, o browser não sabe
-// o que cada campo é e, num formulário com telefone/email/morada ao
-// lado, alguns browsers tentam "ajudar" preenchendo TODOS os campos
-// com dados de contacto guardados (foi assim que o email acabou
-// dentro dos campos de Instagram/WhatsApp/Facebook).
+
 const FIELDS = [
   {
     key: "phone",
@@ -58,15 +54,8 @@ const FIELDS = [
   },
 ];
 
-// Estes 3 têm de começar por http:// ou https:// — nunca mailto:, tel:, etc.
 const LINK_KEYS = ["whatsapp_link", "instagram_link", "facebook_link"];
 
-// Só estes campos + maintenance_mode pertencem a este formulário.
-// Importante: NÃO reenviar o objeto de settings inteiro no submit — ele
-// também traz welcome_hero_image/welcome_secondary_image/about_image/
-// footer_image_left/footer_image_right (strings com o caminho já
-// guardado), e a validação do backend rejeita esses campos quando não
-// vêm como um ficheiro de imagem de verdade.
 const TEXT_KEYS = [
   "phone",
   "email",
@@ -76,10 +65,6 @@ const TEXT_KEYS = [
   "facebook_link",
   "maintenance_mode",
 ];
-
-// NOTA BACKEND: footer_image_left e footer_image_right têm de ser
-// aceites pelo endpoint PUT /api/settings como ficheiros (fillable +
-// validação no SettingController).
 
 function ContactPanel() {
   const [form, setForm] = useState({});
@@ -99,15 +84,13 @@ function ContactPanel() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Verificação rápida antes de enviar: evita voltar a guardar um
-    // "mailto:..." ou qualquer outra coisa nestes 3 campos.
     const invalidLink = LINK_KEYS.find((key) => {
       const value = (form[key] || "").trim();
       return value && !/^https?:\/\//i.test(value);
     });
     if (invalidLink) {
       const field = FIELDS.find((f) => f.key === invalidLink);
-      toast.error(`${field.label} tem de começar por http:// ou https://`);
+      toast.error(`${field.label} tem de começar por http:// ou https:`);
       return;
     }
 

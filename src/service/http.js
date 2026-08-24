@@ -1,4 +1,3 @@
-// src/services/http.js
 import { API_URL, CSRF_COOKIE_URL } from "../config/api";
 
 let csrfReady = false;
@@ -8,7 +7,6 @@ function getCookie(name) {
   return match ? decodeURIComponent(match[2]) : null;
 }
 
-// Sanctum precisa deste cookie antes de login/registo/qualquer POST-PUT-DELETE.
 export async function ensureCsrfCookie() {
   if (csrfReady) return;
   await fetch(CSRF_COOKIE_URL, { credentials: "include" });
@@ -40,7 +38,6 @@ async function request(
   try {
     data = await response.json();
   } catch {
-    // resposta sem corpo JSON — segue sem dados
   }
 
   if (!response.ok) {
@@ -60,8 +57,6 @@ export const http = {
   post: (path, body) => request(path, { method: "POST", body }),
   put: (path, body) => request(path, { method: "PUT", body }),
   del: (path) => request(path, { method: "DELETE" }),
-  // Laravel não processa bem multipart em pedidos PUT — por isso os envios
-  // com ficheiros vão sempre por POST, com "_method" a simular o verbo real.
   postForm: (path, formData) =>
     request(path, { method: "POST", body: formData, isMultipart: true }),
 };
