@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import persusSymbol from "../../assets/persus-symbol.png";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigation } from "../../context/NavigationContext";
@@ -8,13 +9,15 @@ function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const { goTo, view } = useNavigation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const panelLabel = user?.role === "admin" ? "Admin" : "Funcionário";
 
   useEffect(() => {
     function onScroll() {
       const fadeEnd = 300;
       const p =
-        view === "site"
+        view === "site" && location.pathname === "/"
           ? Math.min(Math.max(window.scrollY / fadeEnd, 0), 1)
           : 0;
       setProgress(p);
@@ -23,7 +26,7 @@ function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [view]);
+  }, [view, location.pathname]);
 
   useEffect(() => {
     function onResize() {
@@ -33,25 +36,42 @@ function Navbar() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // Leva de volta à página inicial (se necessário) e troca a "view" interna
+  const goToView = (viewName) => {
+    setMobileOpen(false);
+    if (location.pathname !== "/") {
+      navigate("/");
+    }
+    goTo(viewName);
+  };
+
   const goToSection = (e, href) => {
     e.preventDefault();
     setMobileOpen(false);
     goTo("site");
 
-    setTimeout(() => {
+    const scrollToTarget = () => {
       if (href === "#") {
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
       const target = document.querySelector(href);
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
+    };
+
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(scrollToTarget, 150);
+    } else {
+      setTimeout(scrollToTarget, 50);
+    }
   };
 
   const links = [
     { label: "Início", href: "#" },
     { label: "Sobre", href: "#sobre" },
     { label: "Serviços", href: "#servicos" },
+    { label: "Blog", href: "#blog" },
     { label: "Contacto", href: "#contacto" },
   ];
 
@@ -70,7 +90,7 @@ function Navbar() {
         {/* símbolo à esquerda */}
         <button
           type="button"
-          onClick={() => goTo("site")}
+          onClick={() => goToView("site")}
           aria-label="Início"
           className="shrink-0"
         >
@@ -98,7 +118,7 @@ function Navbar() {
             <>
               <button
                 type="button"
-                onClick={() => goTo("admin")}
+                onClick={() => goToView("admin")}
                 className="text-white text-sm font-medium hover:text-amber-400 transition"
               >
                 {panelLabel}
@@ -115,7 +135,7 @@ function Navbar() {
           ) : (
             <button
               type="button"
-              onClick={() => goTo("login")}
+              onClick={() => goToView("login")}
               className="text-black text-sm font-semibold rounded-full px-10 py-2.5 transition hover:brightness-110"
               style={{ backgroundColor: "#D9A94E" }}
             >
@@ -199,10 +219,7 @@ function Navbar() {
               <>
                 <button
                   type="button"
-                  onClick={() => {
-                    setMobileOpen(false);
-                    goTo("admin");
-                  }}
+                  onClick={() => goToView("admin")}
                   className="flex-1 text-white text-sm font-medium py-2.5 rounded-full border border-white/20 hover:bg-white/5 transition"
                 >
                   {panelLabel}
@@ -222,10 +239,7 @@ function Navbar() {
             ) : (
               <button
                 type="button"
-                onClick={() => {
-                  setMobileOpen(false);
-                  goTo("login");
-                }}
+                onClick={() => goToView("login")}
                 className="w-full text-black text-sm font-semibold rounded-full py-3 transition hover:brightness-110"
                 style={{ backgroundColor: "#D9A94E" }}
               >

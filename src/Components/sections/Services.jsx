@@ -87,8 +87,6 @@ function ServiceGalleryModal({ serviceTitle, slides, onClose }) {
     };
   }, [detailIndex, slides.length]);
 
-  // trava o scroll do body enquanto o modal estiver aberto (funciona bem
-  // inclusive no iOS/Safari, onde só "overflow: hidden" não é suficiente)
   useEffect(() => {
     const scrollY = window.scrollY;
     const body = document.body;
@@ -178,10 +176,9 @@ function ServiceGalleryModal({ serviceTitle, slides, onClose }) {
           </button>
         </div>
 
-        {/* corpo: grelha e detalhe empilhados, com crossfade entre os dois */}
-        <div className="relative flex-1 overflow-hidden">
-          {/* grelha com todas as fotos */}
+        <div className="relative flex-1 min-h-0 overflow-hidden">
           <div
+            data-lenis-prevent
             className={`absolute inset-0 overflow-y-auto overscroll-contain p-5 md:p-8 transition-opacity duration-250 ease-out ${
               detailIndex === null
                 ? "opacity-100"

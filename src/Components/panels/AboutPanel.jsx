@@ -30,36 +30,18 @@ function AboutPanel() {
   return (
     <div className="bg-zinc-50 rounded-2xl border border-zinc-100 p-6 max-w-3xl">
       <p className="text-sm text-zinc-600 mb-6">
-        Estas imagens aparecem na secção "Sobre", ao lado do texto de
-        apresentação da empresa — a primeira é a imagem principal (maior), as
-        outras duas aparecem lado a lado, mais pequenas.
+        Esta foto aparece na secção "Sobre" (Quem Somos / Missão / Visão /
+        Valores) — usa uma foto profissional da equipa, devidamente
+        uniformizada.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="sm:col-span-2">
-          <ImageSlot
-            label="Imagem principal"
-            hint="Equipa, oficina ou um trabalho em destaque."
-            currentUrl={assetUrl(settings?.about_image)}
-            saving={savingKey === "about_image"}
-            onUpload={(file) => handleUpload("about_image", file)}
-          />
-        </div>
-        <ImageSlot
-          label="Imagem secundária 1"
-          hint="Detalhe de um trabalho ou do espaço."
-          currentUrl={assetUrl(settings?.about_image_2)}
-          saving={savingKey === "about_image_2"}
-          onUpload={(file) => handleUpload("about_image_2", file)}
-        />
-        <ImageSlot
-          label="Imagem secundária 2"
-          hint="Detalhe de um trabalho ou do espaço."
-          currentUrl={assetUrl(settings?.about_image_3)}
-          saving={savingKey === "about_image_3"}
-          onUpload={(file) => handleUpload("about_image_3", file)}
-        />
-      </div>
+      <ImageSlot
+        label="Foto da equipa"
+        hint="Foto profissional, equipa uniformizada — aparece grande, ao lado do texto Quem Somos."
+        currentUrl={assetUrl(settings?.about_image)}
+        saving={savingKey === "about_image"}
+        onUpload={(file) => handleUpload("about_image", file)}
+      />
     </div>
   );
 }

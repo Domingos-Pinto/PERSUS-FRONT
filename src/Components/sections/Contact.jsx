@@ -11,6 +11,7 @@ import {
 import EditableText from "../admin/EditableText";
 import { getSettings } from "../../service/settingsApi";
 import { assetUrl } from "../../config/api";
+import persusLogoWhite from "../../assets/persus-logo-white.png";
 
 const Anchor = "a";
 
@@ -181,12 +182,11 @@ function Contact() {
 
           <div>
             <span className="text-xs tracking-[0.2em] uppercase text-amber-500 font-medium"></span>
-            <h3
-              className="mt-3 font-serif uppercase text-3xl md:text-4xl"
-              style={{ fontWeight: 500 }}
-            >
-              Persus
-            </h3>
+            <img
+              src={persusLogoWhite}
+              alt="Persus"
+              className="mt-3 h-8 md:h-10 w-auto mx-auto"
+            />
           </div>
 
           <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-x-10 gap-y-4">

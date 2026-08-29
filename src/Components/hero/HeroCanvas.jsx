@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
+import persusLogoWhite from "../../assets/persus-logo-white.png";
 
 const FRAME_COUNT = 50;
 const frameSrc = (n) =>
@@ -9,11 +10,9 @@ const PRELOAD_PRIORITY = 6;
 
 const IMAGE_CONTRAST = 1.12;
 const IMAGE_ZOOM = 1.2;
-const IMAGE_POSITION_Y = 100; // 0-100 — 100 = mostra o chão, 0 = mostra o teto
-
+const IMAGE_POSITION_Y = 100; 
 const MOBILE_IMAGE_ZOOM = 1.0;
-const MOBILE_IMAGE_POSITION_Y = 65; // um pouco mais alto que no desktop
-
+const MOBILE_IMAGE_POSITION_Y = 65; 
 const SCROLL_LENGTH_VH = 300;
 
 const DISSOLVE_WINDOW = 0.6;
@@ -71,7 +70,7 @@ function HeroCanvas() {
       if (img.decode) {
         img.decode().then(
           () => markLoaded(i, img),
-          () => markLoaded(i, img), // mesmo em erro de decode, não bloqueia o preload
+          () => markLoaded(i, img), 
         );
       } else {
         img.onload = img.onerror = () => markLoaded(i, img);
@@ -390,18 +389,15 @@ function HeroCanvas() {
             [ Luanda, Angola ]
           </span>
 
-          <h1
+          <img
+            src={persusLogoWhite}
+            alt="Persus"
             style={{
-              fontSize: "clamp(2rem, 3.8vw, 3.25rem)",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "-0.01em",
-              lineHeight: 1,
-              margin: 0,
+              height: "clamp(2rem, 3.8vw, 3.25rem)",
+              width: "auto",
+              display: "block",
             }}
-          >
-            PERSUS
-          </h1>
+          />
 
           <p
             style={{

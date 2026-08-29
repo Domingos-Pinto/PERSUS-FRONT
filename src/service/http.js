@@ -2,6 +2,10 @@ import { API_URL, CSRF_COOKIE_URL } from "../config/api";
 
 let csrfReady = false;
 
+export function resetCsrfCookie() {
+  csrfReady = false;
+}
+
 function getCookie(name) {
   const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
   return match ? decodeURIComponent(match[2]) : null;
@@ -11,6 +15,10 @@ export async function ensureCsrfCookie() {
   if (csrfReady) return;
   await fetch(CSRF_COOKIE_URL, { credentials: "include" });
   csrfReady = true;
+}
+
+function notifySessionExpired() {
+  window.dispatchEvent(new Event("auth:unauthenticated"));
 }
 
 async function request(
@@ -41,8 +49,15 @@ async function request(
   }
 
   if (!response.ok) {
+    if (response.status === 401 || response.status === 419) {
+      resetCsrfCookie();
+      notifySessionExpired();
+    }
+
     const error = new Error(
-      data?.message || "Erro na comunicação com o servidor",
+      response.status === 401
+        ? "A tua sessão expirou. Inicia sessão novamente."
+        : data?.message || "Erro na comunicação com o servidor",
     );
     error.status = response.status;
     error.errors = data?.errors || null;

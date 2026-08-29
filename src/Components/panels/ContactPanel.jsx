@@ -153,15 +153,8 @@ function ContactPanel() {
         </div>
 
         <label className="flex items-center gap-3 text-sm text-zinc-600">
-          <input
-            type="checkbox"
-            checked={!!form.maintenance_mode}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, maintenance_mode: e.target.checked }))
-            }
-            className="w-4 h-4 accent-amber-500"
-          />
-          Ativar modo de manutenção
+
+        
         </label>
 
         <button

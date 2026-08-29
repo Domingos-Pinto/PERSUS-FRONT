@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
 import HeroCanvas from "./Components/hero/HeroCanvas";
 import Navbar from "./Components/layout/Navbar";
 import Home from "./Page/home/Home";
@@ -6,6 +7,7 @@ import Login from "./Page/auth/login";
 import ForgotPassword from "./Page/auth/ForgotPassword";
 import ResetPassword from "./Page/auth/ResetPassword";
 import AdminDashboard from "./Page/auth/addmin/AdminDashboard";
+import PostDetail from "./Page/blog/PostDetail";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { NavigationProvider, useNavigation } from "./context/NavigationContext";
 import { AdminProvider } from "./context/AdminContext";
@@ -54,7 +56,10 @@ function App() {
     <AuthProvider>
       <AdminProvider>
         <NavigationProvider>
-          <AppContent />
+          <Routes>
+            <Route path="/blog/:slug" element={<PostDetail />} />
+            <Route path="/*" element={<AppContent />} />
+          </Routes>
         </NavigationProvider>
       </AdminProvider>
     </AuthProvider>

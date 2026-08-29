@@ -6,6 +6,7 @@ import {
   useCallback,
 } from "react";
 import { loginRequest, logoutRequest, meRequest } from "../service/authApi";
+import { resetCsrfCookie } from "../service/http";
 
 const AuthContext = createContext(null);
 
@@ -29,6 +30,13 @@ export function AuthProvider({ children }) {
     refresh();
   }, [refresh]);
 
+  useEffect(() => {
+    const handleUnauthenticated = () => setUser(null);
+    window.addEventListener("auth:unauthenticated", handleUnauthenticated);
+    return () =>
+      window.removeEventListener("auth:unauthenticated", handleUnauthenticated);
+  }, []);
+
   const login = async (login, password) => {
     setError(null);
     try {
@@ -45,6 +53,7 @@ export function AuthProvider({ children }) {
     try {
       await logoutRequest();
     } finally {
+      resetCsrfCookie();
       setUser(null);
     }
   };
